@@ -6,54 +6,184 @@
   <title>실거래 알리미</title>
   <style>
     *{box-sizing:border-box}
+
     body{
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      max-width:860px;
+      max-width:960px;
       margin:0 auto;
-      padding:42px 20px 60px;
-      background:#f5f6f8;
-      color:#17181a;
+      padding:28px 20px 64px;
+      background:#f4f5f7;
+      color:#191b1f;
       line-height:1.5
     }
+
     .card{
       background:#fff;
-      border:1px solid #e8e9ec;
-      border-radius:20px;
-      padding:26px;
+      border:1px solid #e8eaee;
+      border-radius:24px;
+      padding:28px;
       margin:16px 0;
-      box-shadow:0 8px 28px rgba(20,25,35,.055)
+      box-shadow:0 8px 30px rgba(25,30,40,.045)
     }
-    h1{margin:0 0 7px;font-size:30px;letter-spacing:-1px}
-    h2{margin:0 0 18px;font-size:21px;letter-spacing:-.5px}
-    .muted{color:#7a7f87}
-    .row{display:flex;gap:10px;flex-wrap:wrap}
-    input,select,button{font:inherit;min-height:48px;border-radius:13px}
+
+    /* ?? ??? */
+    .hero{
+      position:relative;
+      overflow:hidden;
+      padding:34px 34px 30px;
+      color:#fff;
+      border:0;
+      background:linear-gradient(135deg,#252a33 0%,#171a20 100%);
+      box-shadow:0 14px 40px rgba(20,25,35,.16)
+    }
+
+    .hero:after{
+      content:"";
+      position:absolute;
+      width:180px;
+      height:180px;
+      right:-55px;
+      top:-75px;
+      border-radius:50%;
+      background:rgba(255,255,255,.055)
+    }
+
+    .hero h1{
+      position:relative;
+      z-index:1;
+      margin:0 0 8px;
+      font-size:31px;
+      line-height:1.2;
+      letter-spacing:-1.3px
+    }
+
+    .hero #status{
+      position:relative;
+      z-index:1;
+      color:rgba(255,255,255,.68);
+      font-size:14px
+    }
+
+    h2{
+      margin:0;
+      font-size:21px;
+      letter-spacing:-.6px
+    }
+
+    .muted{
+      color:#7d838d
+    }
+
+    /* ?? ?? */
+    .section-card{
+      padding:28px
+    }
+
+    .section-card > h2{
+      margin-bottom:8px
+    }
+
+    /* ?? ?? */
+    .search-section{
+      padding:30px;
+      box-shadow:0 12px 34px rgba(25,30,40,.065)
+    }
+
+    .search-section > p{
+      margin:0 0 20px;
+      font-size:14px;
+      color:#858b94
+    }
+
+    .search-section .row{
+      display:grid;
+      grid-template-columns:150px minmax(0,1fr) 104px;
+      gap:9px;
+      align-items:stretch
+    }
+
+    input,select,button{
+      font:inherit;
+      min-height:52px;
+      border-radius:14px
+    }
+
     input,select{
-      border:1px solid #dfe1e5;
+      border:1px solid #dfe2e7;
       background:#fff;
-      padding:12px 14px;
-      color:#17181a;
-      outline:none
+      padding:13px 15px;
+      color:#191b1f;
+      outline:none;
+      transition:border-color .15s ease,box-shadow .15s ease
     }
-    input{flex:1;min-width:220px}
+
+    input{
+      width:100%;
+      min-width:0
+    }
+
+    input::placeholder{
+      color:#a1a6ae
+    }
+
     input:focus,select:focus{
-      border-color:#8c93a0;
-      box-shadow:0 0 0 3px rgba(80,90,110,.08)
+      border-color:#737b88;
+      box-shadow:0 0 0 4px rgba(70,80,95,.07)
     }
+
     button{
       cursor:pointer;
       border:0;
       padding:12px 18px;
-      background:#17181a;
+      background:#20242b;
       color:#fff;
-      font-weight:650;
+      font-weight:700;
       transition:transform .12s ease,opacity .12s ease,background .12s ease
     }
-    button:hover{opacity:.9}
-    button:active{transform:scale(.98)}
-    button:disabled{cursor:default;opacity:1;background:#eef0f2;color:#858a92}
-    button.added{background:#eef7f1;color:#26734a}
-    button.secondary{background:#f0f1f3;color:#27292d}
+
+    button:hover{
+      opacity:.9
+    }
+
+    button:active{
+      transform:scale(.98)
+    }
+
+    button:disabled{
+      cursor:default;
+      opacity:1
+    }
+
+    /* ?? ?? */
+    .search-section .row button{
+      background:#20242b;
+      box-shadow:0 5px 14px rgba(20,25,30,.14)
+    }
+
+    /* ?? ?? */
+    #results{
+      margin-top:18px
+    }
+
+    #results:empty{
+      margin-top:0
+    }
+
+    .search-section #results .apt{
+      background:#fff;
+      border:1px solid #e8eaee;
+      border-radius:18px;
+      margin:10px 0;
+      padding:18px;
+      min-height:82px;
+      box-shadow:0 3px 12px rgba(20,25,35,.035)
+    }
+
+    .search-section #results .apt:hover{
+      border-color:#d5d9df;
+      box-shadow:0 7px 18px rgba(20,25,35,.07)
+    }
+
     .apt{
       display:flex;
       justify-content:space-between;
@@ -62,40 +192,191 @@
       padding:16px 0;
       border-bottom:1px solid #edf0f2
     }
-    .apt:last-child{border-bottom:0}
-    .apt b{font-size:16px}
-    .apt .muted{font-size:14px;margin-top:3px}
-    .hidden{display:none}
-    .danger{background:#f05252}
+
+    .apt:last-child{
+      border-bottom:0
+    }
+
+    .apt b{
+      display:block;
+      font-size:16px;
+      letter-spacing:-.25px
+    }
+
+    .apt .muted{
+      font-size:13px;
+      margin-top:4px
+    }
+
+    /* ?? ?? ?? */
+    #results .apt button{
+      min-width:100px;
+      flex-shrink:0;
+      border-radius:12px;
+      font-size:13px
+    }
+
+    #results .apt button.added{
+      background:#eef7f1;
+      color:#27734b;
+      border:1px solid #d7ecdf
+    }
+
+    /* ?? ??? */
+    .interest-section #mine .apt{
+      background:#f8f9fb;
+      border:1px solid #eceef1;
+      border-radius:17px;
+      margin:10px 0;
+      padding:17px 18px
+    }
+
+    .interest-section #mine .apt:last-child{
+      border-bottom:1px solid #eceef1
+    }
+
+    .interest-section #mine .apt:hover{
+      background:#f6f7f9
+    }
+
+    .danger{
+      background:#fff;
+      color:#d65353;
+      border:1px solid #f0d7d7;
+      min-height:40px;
+      padding:8px 14px;
+      border-radius:11px;
+      font-size:13px
+    }
+
+    .danger:hover{
+      background:#fff7f7;
+      opacity:1
+    }
+
+    #empty{
+      padding:28px 10px 12px;
+      text-align:center;
+      font-size:14px
+    }
+
+    #searchStatus{
+      margin-top:12px;
+      font-size:13px
+    }
+
+    .hidden{
+      display:none
+    }
+
+    /* ??? */
+    #guest{
+      text-align:center;
+      padding:32px
+    }
+
+    #guest p{
+      margin:0 0 20px;
+      color:#646a74
+    }
+
     #login{
-      display:inline-block;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
       text-decoration:none;
       background:#fee500;
       color:#191919;
-      padding:13px 20px;
+      padding:13px 22px;
       border-radius:13px;
-      font-weight:700
+      font-weight:750;
+      box-shadow:0 5px 14px rgba(0,0,0,.08)
     }
-    .notice{
-      padding:14px 16px;
-      border-radius:13px;
-      background:#f3f6ff;
-      border:1px solid #e1e7ff;
-      margin-top:14px
+
+    /* ???? */
+    .logout-card{
+      margin-top:8px;
+      padding:4px 2px;
+      text-align:right;
+      background:transparent;
+      border:0;
+      box-shadow:none
     }
-    #status{font-size:14px}
-    #searchStatus{margin-top:12px}
-    #results{margin-top:8px}
-    @media(max-width:600px){
-      body{padding:22px 14px 40px}
-      .card{padding:20px;border-radius:17px}
-      h1{font-size:26px}
-      .row{flex-direction:column}
-      input,select,button{width:100%}
-      .apt{align-items:flex-start}
-      .apt button{width:auto;min-width:92px;flex-shrink:0}
+
+    button.secondary{
+      background:#e9ebee;
+      color:#555b64;
+      min-height:42px;
+      padding:9px 16px;
+      font-size:13px
     }
-  </style>
+
+    @media(max-width:700px){
+      body{
+        padding:16px 13px 42px
+      }
+
+      .card{
+        border-radius:20px;
+        padding:22px
+      }
+
+      .hero{
+        padding:27px 24px 25px
+      }
+
+      .hero h1{
+        font-size:27px
+      }
+
+      .section-card,
+      .search-section{
+        padding:23px
+      }
+
+      .search-section .row{
+        grid-template-columns:1fr;
+        gap:8px
+      }
+
+      input,select,button{
+        width:100%
+      }
+
+      .apt{
+        align-items:flex-start
+      }
+
+      .apt button{
+        width:auto;
+        min-width:88px;
+        flex-shrink:0
+      }
+
+      #results .apt button{
+        width:auto
+      }
+    }
+
+    @media(max-width:420px){
+      .apt{
+        gap:10px
+      }
+
+      .apt b{
+        font-size:15px
+      }
+
+      .apt .muted{
+        font-size:12px
+      }
+
+      #results .apt button{
+        min-width:88px;
+        padding:10px 11px
+      }
+    }
+</style>
 </head>
 <body>
   <div class="card">
@@ -213,7 +494,7 @@ async function searchApartments(){
       const div=document.createElement('div'); div.className='apt';
       const added=subscriptions.includes(a.id);
       div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)} ${escapeHtml(a.address || "")}</div></div>`;
-      const btn=document.createElement('button'); btn.textContent=added?'등록됨':'알림 추가'; btn.disabled=added;
+      const btn=document.createElement('button'); btn.className=added?'added':''; btn.textContent=added?String.fromCharCode(46321,47197,50756,47308):String.fromCharCode(50508,47548,32,52628,44032); btn.disabled=added;
       if(!added) btn.onclick=()=>addApartment(a,btn);
       div.appendChild(btn); box.appendChild(div);
     });
