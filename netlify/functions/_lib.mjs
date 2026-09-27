@@ -67,17 +67,26 @@ export function makeSession(userId) {
 }
 
 export function getSession(req) {
-  const raw = req.headers.get("cookie") || "";
-  const match = raw.match(/(?:^|; )rea_session=([^;]+)/);
-  if (!match) return null;
-  const token = decodeURIComponent(match[1]);
-  const parts = token.split(".");
-  if (parts.length !== 3) return null;
-  const [userId, issued, sig] = parts;
-  const expected = sign(`${userId}.${issued}`);
-  if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return null;
-  if (Date.now() - Number(issued) > 60*60*24*30*1000) return null;
-  return userId;
+  try{
+    const raw = req.headers.get("cookie") || "";
+    const match = raw.match(/(?:^|; )rea_session=([^;]+)/);
+    if (!match) return null;
+    const token = decodeURIComponent(match[1]);
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+    const [userId, issued, sig] = parts;
+    const expected = sign(`${userId}.${issued}`);
+    const sigBuf = Buffer.from(sig);
+    const expectedBuf = Buffer.from(expected);
+    // timingSafeEqual은 두 버퍼 길이가 다르면 비교 대신 예외를 던지므로,
+    // 형식이 깨진(옛날 버전, 수동 수정 등) 쿠키가 와도 죽지 않게 먼저 길이를 확인합니다.
+    if (sigBuf.length !== expectedBuf.length) return null;
+    if (!crypto.timingSafeEqual(sigBuf, expectedBuf)) return null;
+    if (Date.now() - Number(issued) > 60*60*24*30*1000) return null;
+    return userId;
+  }catch(e){
+    return null;
+  }
 }
 
 export async function requireUser(req) {
