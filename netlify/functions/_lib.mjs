@@ -10,6 +10,25 @@ export const DEFAULT_APARTMENTS = [
   {id:"11710-geoyeo5", name:"거여5단지", district:"서울 송파구", lawd_cd:"11710"}
 ];
 
+// 서울 25개 자치구의 법정동코드 앞 5자리(=국토부 실거래가 API의 LAWD_CD).
+// 아파트 검색(search-apartments.mjs)에서 "구를 고르면 그 지역 실거래 데이터에서
+// 아파트 이름을 찾는" 방식으로 쓰입니다. 이 코드는 정부 표준코드라 거의 바뀌지 않습니다.
+export const SEOUL_DISTRICTS = [
+  {name:"종로구", lawd_cd:"11110"}, {name:"중구", lawd_cd:"11140"},
+  {name:"용산구", lawd_cd:"11170"}, {name:"성동구", lawd_cd:"11200"},
+  {name:"광진구", lawd_cd:"11215"}, {name:"동대문구", lawd_cd:"11230"},
+  {name:"중랑구", lawd_cd:"11260"}, {name:"성북구", lawd_cd:"11290"},
+  {name:"강북구", lawd_cd:"11305"}, {name:"도봉구", lawd_cd:"11320"},
+  {name:"노원구", lawd_cd:"11350"}, {name:"은평구", lawd_cd:"11380"},
+  {name:"서대문구", lawd_cd:"11410"}, {name:"마포구", lawd_cd:"11440"},
+  {name:"양천구", lawd_cd:"11470"}, {name:"강서구", lawd_cd:"11500"},
+  {name:"구로구", lawd_cd:"11530"}, {name:"금천구", lawd_cd:"11545"},
+  {name:"영등포구", lawd_cd:"11560"}, {name:"동작구", lawd_cd:"11590"},
+  {name:"관악구", lawd_cd:"11620"}, {name:"서초구", lawd_cd:"11650"},
+  {name:"강남구", lawd_cd:"11680"}, {name:"송파구", lawd_cd:"11710"},
+  {name:"강동구", lawd_cd:"11740"}
+];
+
 export function json(data, status=200, headers={}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -99,6 +118,20 @@ export async function getMonths() {
     `${y}${String(m).padStart(2,"0")}`,
     `${prev.getUTCFullYear()}${String(prev.getUTCMonth()+1).padStart(2,"0")}`
   ];
+}
+
+// 아파트 "검색" 전용: 최근 n개월치 연월 문자열(YYYYMM)을 반환합니다.
+// 모니터링(getMonths)은 새 거래만 잡으면 되니 2개월이면 충분하지만,
+// 검색은 거래가 뜸한 단지도 찾을 수 있게 더 길게(기본 6개월) 봅니다.
+export async function getMonthsBack(n=6) {
+  const d = new Date();
+  const y = d.getUTCFullYear(), m = d.getUTCMonth()+1;
+  const out=[];
+  for(let i=0;i<n;i++){
+    const dt = new Date(Date.UTC(y, m-1-i, 1));
+    out.push(`${dt.getUTCFullYear()}${String(dt.getUTCMonth()+1).padStart(2,"0")}`);
+  }
+  return out;
 }
 
 export async function fetchMonth(serviceKey, lawdCd, yyyymm) {
