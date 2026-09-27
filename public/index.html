@@ -110,7 +110,7 @@ function renderMine(){
   empty.classList.toggle('hidden', list.length!==0);
   list.forEach(a=>{
     const div=document.createElement('div'); div.className='apt';
-    div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)}</div></div>`;
+    div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)} ${escapeHtml(a.address || '')}</div></div>`;
     const btn=document.createElement('button'); btn.className='danger'; btn.textContent='삭제';
     btn.onclick=()=>removeApartment(a.id); div.appendChild(btn); box.appendChild(div);
   });

@@ -35,6 +35,7 @@ export default async (req) => {
           id: `${district.lawd_cd}-${normalize(name)}-${normalize(umd)}`,
           name,
           district: `서울 ${district.name}`,
+	  address: `${umd} ${String(row.jibun || "").trim()}`.trim(),
           lawd_cd: district.lawd_cd
         });
       }
