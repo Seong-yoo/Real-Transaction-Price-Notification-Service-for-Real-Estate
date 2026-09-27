@@ -1,9 +1,9 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>실거래 알리미</title>
+  <title>?ㅺ굅???뚮━誘?/title>
   <style>
     body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:760px;margin:0 auto;padding:28px 18px;background:#f6f7f9;color:#222}
     .card{background:#fff;border-radius:16px;padding:22px;margin:14px 0;box-shadow:0 2px 12px rgba(0,0,0,.06)}
@@ -18,29 +18,29 @@
 </head>
 <body>
   <div class="card">
-    <h1>🏠 실거래 알리미</h1>
-    <div id="status" class="muted">로그인 여부를 확인하고 있어요...</div>
+    <h1>?룧 ?ㅺ굅???뚮━誘?/h1>
+    <div id="status" class="muted">濡쒓렇???щ?瑜??뺤씤?섍퀬 ?덉뼱??..</div>
   </div>
 
   <div id="guest" class="card hidden">
-    <p>카카오로 로그인하면 내가 원하는 아파트만 골라서 실거래 알림을 받을 수 있어요.</p>
-    <a id="login" href="/api/login">카카오로 로그인</a>
+    <p>移댁뭅?ㅻ줈 濡쒓렇?명븯硫??닿? ?먰븯???꾪뙆?몃쭔 怨⑤씪???ㅺ굅???뚮┝??諛쏆쓣 ???덉뼱??</p>
+    <a id="login" href="/api/login">移댁뭅?ㅻ줈 濡쒓렇??/a>
   </div>
 
   <div id="app" class="hidden">
     <div class="card">
-      <h2>내 관심 아파트</h2>
+      <h2>??愿???꾪뙆??/h2>
       <div id="mine"></div>
-      <div id="empty" class="muted hidden">아직 등록한 아파트가 없어요.</div>
+      <div id="empty" class="muted hidden">?꾩쭅 ?깅줉???꾪뙆?멸? ?놁뼱??</div>
     </div>
 
     <div class="card">
-      <h2>아파트 추가</h2>
-      <p class="muted">서울 25개 구를 지원해요. 구를 고르고 아파트 이름을 검색하세요. (최근 6개월 내 실거래가 있는 단지만 검색돼요)</p>
+      <h2>?꾪뙆??異붽?</h2>
+      <p class="muted">?쒖슱 25媛?援щ? 吏?먰빐?? 援щ? 怨좊Ⅴ怨??꾪뙆???대쫫??寃?됲븯?몄슂. (理쒓렐 6媛쒖썡 ???ㅺ굅?섍? ?덈뒗 ?⑥?留?寃?됰뤌??</p>
       <div class="row">
         <select id="districtSelect"></select>
-        <input id="search" placeholder="예: 헬리오시티, 잠실주공">
-        <button onclick="searchApartments()">검색</button>
+        <input id="search" placeholder="?? ?щ━?ㅼ떆?? ?좎떎二쇨났">
+        <button onclick="searchApartments()">寃??/button>
       </div>
       <div id="results"></div>
       <div id="searchStatus" class="muted"></div>
@@ -48,7 +48,7 @@
 
 
     <div class="card">
-      <button class="secondary" onclick="logout()">로그아웃</button>
+      <button class="secondary" onclick="logout()">濡쒓렇?꾩썐</button>
     </div>
   </div>
 
@@ -58,17 +58,17 @@ let subscriptions = [];
 let apartments = [];
 let lastResults = [];
 
-// 백엔드 SEOUL_DISTRICTS(_lib.mjs)와 이름이 정확히 같아야 검색이 동작합니다.
+// 諛깆뿏??SEOUL_DISTRICTS(_lib.mjs)? ?대쫫???뺥솗??媛숈븘??寃?됱씠 ?숈옉?⑸땲??
 const SEOUL_DISTRICTS = [
-  "종로구","중구","용산구","성동구","광진구","동대문구","중랑구","성북구","강북구","도봉구",
-  "노원구","은평구","서대문구","마포구","양천구","강서구","구로구","금천구","영등포구","동작구",
-  "관악구","서초구","강남구","송파구","강동구"
+  "醫낅줈援?,"以묎뎄","?⑹궛援?,"?깅룞援?,"愿묒쭊援?,"?숇?臾멸뎄","以묐옉援?,"?깅턿援?,"媛뺣턿援?,"?꾨큺援?,
+  "?몄썝援?,"??됯뎄","?쒕?臾멸뎄","留덊룷援?,"?묒쿇援?,"媛뺤꽌援?,"援щ줈援?,"湲덉쿇援?,"?곷벑?ш뎄","?숈옉援?,
+  "愿?낃뎄","?쒖큹援?,"媛뺣궓援?,"?≫뙆援?,"媛뺣룞援?
 ];
 
 async function api(url, options={}) {
   const r = await fetch(url, {credentials:'include', ...options});
   const data = await r.json().catch(()=>({}));
-  if (!r.ok) throw new Error(data.error || '요청에 실패했습니다.');
+  if (!r.ok) throw new Error(data.error || '?붿껌???ㅽ뙣?덉뒿?덈떎.');
   return data;
 }
 
@@ -82,12 +82,12 @@ async function init(){
   try{
     const data = await api('/api/me');
     if(!data.loggedIn){
-      document.getElementById('status').textContent='로그인하지 않았어요.';
+      document.getElementById('status').textContent='濡쒓렇?명븯吏 ?딆븯?댁슂.';
       document.getElementById('guest').classList.remove('hidden');
       return;
     }
     me=data.user;
-    document.getElementById('status').textContent=`${me.nickname || '사용자'}님으로 로그인됨`;
+    document.getElementById('status').textContent=`${me.nickname || '?ъ슜??}?섏쑝濡?濡쒓렇?몃맖`;
     document.getElementById('app').classList.remove('hidden');
     await loadAll();
   }catch(e){
@@ -111,7 +111,7 @@ function renderMine(){
   list.forEach(a=>{
     const div=document.createElement('div'); div.className='apt';
     div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)} ${escapeHtml(a.address || '')}</div></div>`;
-    const btn=document.createElement('button'); btn.className='danger'; btn.textContent='삭제';
+    const btn=document.createElement('button'); btn.className='danger'; btn.textContent='??젣';
     btn.onclick=()=>removeApartment(a.id); div.appendChild(btn); box.appendChild(div);
   });
 }
@@ -121,18 +121,18 @@ async function searchApartments(){
   const q=document.getElementById('search').value.trim();
   const box=document.getElementById('results');
   const status=document.getElementById('searchStatus');
-  if(!q){ box.innerHTML=''; status.textContent='아파트 이름을 입력해주세요.'; return; }
-  status.textContent='검색 중...';
+  if(!q){ box.innerHTML=''; status.textContent='?꾪뙆???대쫫???낅젰?댁＜?몄슂.'; return; }
+  status.textContent='寃??以?..';
   box.innerHTML='';
   try{
     const data=await api(`/api/search-apartments?district=${encodeURIComponent(district)}&q=${encodeURIComponent(q)}`);
     lastResults=data.results||[];
-    status.textContent = lastResults.length ? '' : '최근 6개월 내 거래 기록에서 일치하는 단지를 찾지 못했어요.';
+    status.textContent = lastResults.length ? '' : '理쒓렐 6媛쒖썡 ??嫄곕옒 湲곕줉?먯꽌 ?쇱튂?섎뒗 ?⑥?瑜?李얠? 紐삵뻽?댁슂.';
     lastResults.forEach(a=>{
       const div=document.createElement('div'); div.className='apt';
       const added=subscriptions.includes(a.id);
-      div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)}</div></div>`;
-      const btn=document.createElement('button'); btn.textContent=added?'등록됨':'알림 추가'; btn.disabled=added;
+      div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)} ${escapeHtml(a.address || "")}</div></div>`;
+      const btn=document.createElement('button'); btn.textContent=added?'?깅줉??:'?뚮┝ 異붽?'; btn.disabled=added;
       if(!added) btn.onclick=()=>addApartment(a);
       div.appendChild(btn); box.appendChild(div);
     });
@@ -149,7 +149,7 @@ async function addApartment(apt){
   }catch(e){alert(e.message)}
 }
 async function removeApartment(id){
-  if(!confirm('이 아파트 알림을 삭제할까요?')) return;
+  if(!confirm('???꾪뙆???뚮┝????젣?좉퉴??')) return;
   try{ await api('/api/subscriptions',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({apartmentId:id})});
     subscriptions=subscriptions.filter(x=>x!==id); renderMine();
   }catch(e){alert(e.message)}
@@ -160,3 +160,4 @@ init();
 </script>
 </body>
 </html>
+
