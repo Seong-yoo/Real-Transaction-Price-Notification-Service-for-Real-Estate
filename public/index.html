@@ -4,415 +4,297 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>실거래 알리미</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    :root{
+      --paper:#efece4;
+      --surface:#fbfaf6;
+      --ink:#1c2233;
+      --ink-soft:#666c78;
+      --line:#dcd8cd;
+      --navy:#28324a;
+      --navy-deep:#1a2135;
+      --stamp:#a8382c;
+      --kakao:#fee500;
+    }
+
     *{box-sizing:border-box}
 
     body{
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      max-width:960px;
+      font-family:'Noto Sans KR',system-ui,-apple-system,sans-serif;
+      max-width:720px;
       margin:0 auto;
-      padding:28px 20px 64px;
-      background:#f4f5f7;
-      color:#191b1f;
-      line-height:1.5
+      padding:0 0 72px;
+      background:var(--paper);
+      color:var(--ink);
+      line-height:1.55
     }
 
-    .card{
-      background:#fff;
-      border:1px solid #e8eaee;
-      border-radius:24px;
-      padding:28px;
-      margin:16px 0;
-      box-shadow:0 8px 30px rgba(25,30,40,.045)
-    }
-
-    /* ?? ??? */
-    .hero{
-      position:relative;
-      overflow:hidden;
-      padding:34px 34px 30px;
-      color:#fff;
-      border:0;
-      background:linear-gradient(135deg,#252a33 0%,#171a20 100%);
-      box-shadow:0 14px 40px rgba(20,25,35,.16)
-    }
-
-    .hero:after{
-      content:"";
-      position:absolute;
-      width:180px;
-      height:180px;
-      right:-55px;
-      top:-75px;
-      border-radius:50%;
-      background:rgba(255,255,255,.055)
-    }
-
-    .hero h1{
-      position:relative;
-      z-index:1;
-      margin:0 0 8px;
-      font-size:31px;
-      line-height:1.2;
-      letter-spacing:-1.3px
-    }
-
-    .hero #status{
-      position:relative;
-      z-index:1;
-      color:rgba(255,255,255,.68);
-      font-size:14px
-    }
-
-    h2{
-      margin:0;
-      font-size:21px;
-      letter-spacing:-.6px
-    }
-
-    .muted{
-      color:#7d838d
-    }
-
-    /* ?? ?? */
-    .section-card{
-      padding:28px
-    }
-
-    .section-card > h2{
-      margin-bottom:8px
-    }
-
-    /* ?? ?? */
-    .search-section{
-      padding:30px;
-      box-shadow:0 12px 34px rgba(25,30,40,.065)
-    }
-
-    .search-section > p{
-      margin:0 0 20px;
-      font-size:14px;
-      color:#858b94
-    }
-
-    .search-section .row{
-      display:grid;
-      grid-template-columns:150px minmax(0,1fr) 104px;
-      gap:9px;
-      align-items:stretch
-    }
-
-    input,select,button{
-      font:inherit;
-      min-height:52px;
-      border-radius:14px
-    }
-
-    input,select{
-      border:1px solid #dfe2e7;
-      background:#fff;
-      padding:13px 15px;
-      color:#191b1f;
-      outline:none;
-      transition:border-color .15s ease,box-shadow .15s ease
-    }
-
-    input{
-      width:100%;
-      min-width:0
-    }
-
-    input::placeholder{
-      color:#a1a6ae
-    }
-
-    input:focus,select:focus{
-      border-color:#737b88;
-      box-shadow:0 0 0 4px rgba(70,80,95,.07)
-    }
-
-    button{
-      cursor:pointer;
-      border:0;
-      padding:12px 18px;
-      background:#20242b;
-      color:#fff;
-      font-weight:700;
-      transition:transform .12s ease,opacity .12s ease,background .12s ease
-    }
-
-    button:hover{
-      opacity:.9
-    }
-
-    button:active{
-      transform:scale(.98)
-    }
-
-    button:disabled{
-      cursor:default;
-      opacity:1
-    }
-
-    /* ?? ?? */
-    .search-section .row button{
-      background:#20242b;
-      box-shadow:0 5px 14px rgba(20,25,30,.14)
-    }
-
-    /* ?? ?? */
-    #results{
-      margin-top:18px
-    }
-
-    #results:empty{
-      margin-top:0
-    }
-
-    .search-section #results .apt{
-      background:#fff;
-      border:1px solid #e8eaee;
-      border-radius:18px;
-      margin:10px 0;
-      padding:18px;
-      min-height:82px;
-      box-shadow:0 3px 12px rgba(20,25,35,.035)
-    }
-
-    .search-section #results .apt:hover{
-      border-color:#d5d9df;
-      box-shadow:0 7px 18px rgba(20,25,35,.07)
-    }
-
-    .apt{
+    header{
       display:flex;
+      align-items:baseline;
       justify-content:space-between;
-      align-items:center;
-      gap:18px;
-      padding:16px 0;
-      border-bottom:1px solid #edf0f2
+      padding:28px 22px 18px;
+      border-bottom:1px solid var(--line)
     }
 
-    .apt:last-child{
-      border-bottom:0
+    header h1{
+      margin:0;
+      font-family:'Noto Serif KR',serif;
+      font-weight:700;
+      font-size:22px;
+      letter-spacing:-.2px;
+      color:var(--navy-deep)
     }
 
-    .apt b{
-      display:block;
-      font-size:16px;
-      letter-spacing:-.25px
+    #status{
+      font-size:12.5px;
+      color:var(--ink-soft);
+      font-variant-numeric:tabular-nums
     }
 
-    .apt .muted{
-      font-size:13px;
-      margin-top:4px
-    }
+    main{padding:0 22px}
 
-    /* ?? ?? ?? */
-    #results .apt button{
-      min-width:100px;
-      flex-shrink:0;
-      border-radius:12px;
-      font-size:13px
-    }
-
-    #results .apt button.added{
-      background:#eef7f1;
-      color:#27734b;
-      border:1px solid #d7ecdf
-    }
-
-    /* ?? ??? */
-    .interest-section #mine .apt{
-      background:#f8f9fb;
-      border:1px solid #eceef1;
-      border-radius:17px;
-      margin:10px 0;
-      padding:17px 18px
-    }
-
-    .interest-section #mine .apt:last-child{
-      border-bottom:1px solid #eceef1
-    }
-
-    .interest-section #mine .apt:hover{
-      background:#f6f7f9
-    }
-
-    .danger{
-      background:#fff;
-      color:#d65353;
-      border:1px solid #f0d7d7;
-      min-height:40px;
-      padding:8px 14px;
-      border-radius:11px;
-      font-size:13px
-    }
-
-    .danger:hover{
-      background:#fff7f7;
-      opacity:1
-    }
-
-    #empty{
-      padding:28px 10px 12px;
-      text-align:center;
-      font-size:14px
-    }
-
-    #searchStatus{
-      margin-top:12px;
-      font-size:13px
-    }
-
-    .hidden{
-      display:none
-    }
-
-    /* ??? */
     #guest{
       text-align:center;
-      padding:32px
+      padding:56px 20px
     }
 
     #guest p{
-      margin:0 0 20px;
-      color:#646a74
+      margin:0 0 24px;
+      color:var(--ink-soft);
+      font-size:14.5px
     }
 
     #login{
       display:inline-flex;
       align-items:center;
-      justify-content:center;
+      gap:8px;
       text-decoration:none;
-      background:#fee500;
+      background:var(--kakao);
       color:#191919;
-      padding:13px 22px;
-      border-radius:13px;
-      font-weight:750;
-      box-shadow:0 5px 14px rgba(0,0,0,.08)
+      padding:13px 26px;
+      border-radius:8px;
+      font-weight:700;
+      font-size:14.5px
     }
 
-    /* ???? */
-    .logout-card{
-      margin-top:8px;
-      padding:4px 2px;
-      text-align:right;
-      background:transparent;
+    section{margin-top:38px}
+
+    section > h2{
+      margin:0 0 4px;
+      font-family:'Noto Serif KR',serif;
+      font-weight:700;
+      font-size:17px;
+      color:var(--navy-deep)
+    }
+
+    section > p.hint{
+      margin:0 0 16px;
+      font-size:12.5px;
+      color:var(--ink-soft)
+    }
+
+    .entry{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:15px 4px 15px 14px;
+      border-bottom:1px solid var(--line);
+      position:relative
+    }
+
+    .entry:before{
+      content:"";
+      position:absolute;
+      left:0; top:10px; bottom:10px;
+      width:3px;
+      background:var(--navy);
+      border-radius:2px
+    }
+
+    .entry:first-child{border-top:1px solid var(--line)}
+
+    .entry .info{flex:1; min-width:0}
+
+    .entry b{
+      display:block;
+      font-size:15.5px;
+      font-weight:700;
+      color:var(--ink)
+    }
+
+    .entry .district{
+      margin-top:2px;
+      font-size:12.5px;
+      color:var(--ink-soft);
+      font-variant-numeric:tabular-nums
+    }
+
+    #empty{
+      padding:30px 4px;
+      text-align:center;
+      font-size:13.5px;
+      color:var(--ink-soft);
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line)
+    }
+
+    .search-row{
+      display:grid;
+      grid-template-columns:106px 1fr auto;
+      gap:8px
+    }
+
+    input,select{
+      font:inherit;
+      font-size:14px;
+      padding:12px 13px;
+      border:1px solid var(--line);
+      background:var(--surface);
+      color:var(--ink);
+      border-radius:7px;
+      outline:none;
+      transition:border-color .15s ease
+    }
+
+    input:focus,select:focus{border-color:var(--navy)}
+
+    input::placeholder{color:#a7a49a}
+
+    button{
+      font:inherit;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
       border:0;
-      box-shadow:none
+      border-radius:7px;
+      padding:12px 20px;
+      background:var(--navy);
+      color:#fff;
+      transition:opacity .12s ease,transform .1s ease
     }
 
-    button.secondary{
-      background:#e9ebee;
-      color:#555b64;
-      min-height:42px;
-      padding:9px 16px;
-      font-size:13px
+    button:hover{opacity:.9}
+    button:active{transform:scale(.98)}
+    button:disabled{cursor:default}
+
+    #searchStatus{
+      margin-top:14px;
+      font-size:12.5px;
+      color:var(--ink-soft)
     }
 
-    @media(max-width:700px){
-      body{
-        padding:16px 13px 42px
-      }
+    #results .entry{padding-right:0}
 
-      .card{
-        border-radius:20px;
-        padding:22px
-      }
-
-      .hero{
-        padding:27px 24px 25px
-      }
-
-      .hero h1{
-        font-size:27px
-      }
-
-      .section-card,
-      .search-section{
-        padding:23px
-      }
-
-      .search-section .row{
-        grid-template-columns:1fr;
-        gap:8px
-      }
-
-      input,select,button{
-        width:100%
-      }
-
-      .apt{
-        align-items:flex-start
-      }
-
-      .apt button{
-        width:auto;
-        min-width:88px;
-        flex-shrink:0
-      }
-
-      #results .apt button{
-        width:auto
-      }
+    .btn-danger{
+      background:transparent;
+      color:var(--stamp);
+      border:1px solid #e6c8c3;
+      padding:8px 14px;
+      font-size:12.5px
     }
 
-    @media(max-width:420px){
-      .apt{
-        gap:10px
-      }
+    .btn-danger:hover{background:#fbf0ee}
 
-      .apt b{
-        font-size:15px
-      }
-
-      .apt .muted{
-        font-size:12px
-      }
-
-      #results .apt button{
-        min-width:88px;
-        padding:10px 11px
-      }
+    .btn-add{
+      background:var(--navy);
+      color:#fff;
+      padding:8px 16px;
+      font-size:12.5px;
+      white-space:nowrap
     }
-</style>
+
+    /* 등록완료: 관공서 서류의 도장(인감)을 본뜬 배지 */
+    .stamp{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      border:2px solid var(--stamp);
+      color:var(--stamp);
+      font-family:'Noto Serif KR',serif;
+      font-weight:700;
+      font-size:12.5px;
+      letter-spacing:-.3px;
+      transform:rotate(-9deg);
+      background:transparent;
+      flex-shrink:0;
+      opacity:.85;
+      white-space:normal;
+      line-height:1.15;
+      text-align:center;
+      padding:0 4px
+    }
+
+    .footer-row{
+      margin-top:44px;
+      padding-top:18px;
+      border-top:1px solid var(--line);
+      text-align:right
+    }
+
+    .btn-ghost{
+      background:transparent;
+      color:var(--ink-soft);
+      border:1px solid var(--line);
+      font-weight:500;
+      font-size:12.5px;
+      padding:9px 16px
+    }
+
+    .btn-ghost:hover{background:var(--surface)}
+
+    .hidden{display:none}
+
+    @media(max-width:520px){
+      header{padding:22px 16px 16px}
+      main{padding:0 16px}
+      .search-row{grid-template-columns:1fr}
+      .stamp{width:56px;height:56px;font-size:11.5px}
+    }
+  </style>
 </head>
 <body>
-  <div class="card">
-    <h1>🏠 실거래 알리미</h1>
-    <div id="status" class="muted">로그인 여부를 확인하고 있어요...</div>
-  </div>
+  <header>
+    <h1>실거래 알리미</h1>
+    <div id="status">로그인 여부를 확인하고 있어요…</div>
+  </header>
 
-  <div id="guest" class="card hidden">
-    <p>카카오로 로그인하면 내가 원하는 아파트만 골라서 실거래 알림을 받을 수 있어요.</p>
-    <a id="login" href="/api/login">카카오로 로그인</a>
-  </div>
-
-  <div id="app" class="hidden">
-    <div class="card">
-      <h2>내 관심 아파트</h2>
-      <div id="mine"></div>
-      <div id="empty" class="muted hidden">아직 등록한 아파트가 없어요.</div>
+  <main>
+    <div id="guest" class="hidden">
+      <p>카카오로 로그인하면 내가 원하는 아파트만 골라서<br>실거래 알림을 받을 수 있어요.</p>
+      <a id="login" href="/api/login">카카오로 로그인</a>
     </div>
 
-    <div class="card">
-      <h2>아파트 추가</h2>
-      <p class="muted">서울 25개 구를 지원해요. 구를 고르고 아파트 이름을 검색하세요. (최근 6개월 내 실거래가 있는 단지만 검색돼요)</p>
-      <div class="row">
-        <select id="districtSelect"></select>
-        <input id="search" placeholder="예: 헬리오시티, 잠실주공" onkeydown="if(event.key===String.fromCharCode(69,110,116,101,114)) searchApartments()">
-        <button onclick="searchApartments()">검색</button>
+    <div id="app" class="hidden">
+      <section>
+        <h2>내 관심 아파트</h2>
+        <div id="mine"></div>
+        <div id="empty" class="hidden">아직 등록한 아파트가 없어요.</div>
+      </section>
+
+      <section>
+        <h2>아파트 추가</h2>
+        <p class="hint">서울 25개 구를 지원해요. 구를 고르고 아파트 이름을 검색하세요. (최근 6개월 내 실거래가 있는 단지만 검색돼요)</p>
+        <div class="search-row">
+          <select id="districtSelect"></select>
+          <input id="search" placeholder="예: 헬리오시티, 잠실주공" onkeydown="if(event.key==='Enter') searchApartments()">
+          <button onclick="searchApartments()">검색</button>
+        </div>
+        <div id="results"></div>
+        <div id="searchStatus"></div>
+      </section>
+
+      <div class="footer-row">
+        <button class="btn-ghost" onclick="logout()">로그아웃</button>
       </div>
-      <div id="results"></div>
-      <div id="searchStatus" class="muted"></div>
     </div>
-
-
-    <div class="card">
-      <button class="secondary" onclick="logout()">로그아웃</button>
-    </div>
-  </div>
+  </main>
 
 <script>
 let me = null;
@@ -471,9 +353,9 @@ function renderMine(){
   const list=subscriptions.map(id=>apartments.find(a=>a.id===id)).filter(Boolean);
   empty.classList.toggle('hidden', list.length!==0);
   list.forEach(a=>{
-    const div=document.createElement('div'); div.className='apt';
-    div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)}</div></div>`;
-    const btn=document.createElement('button'); btn.className='danger'; btn.textContent='삭제';
+    const div=document.createElement('div'); div.className='entry';
+    div.innerHTML=`<div class="info"><b>${escapeHtml(a.name)}</b><div class="district">${escapeHtml(a.district)}</div></div>`;
+    const btn=document.createElement('button'); btn.className='btn-danger'; btn.textContent='삭제';
     btn.onclick=()=>removeApartment(a.id); div.appendChild(btn); box.appendChild(div);
   });
 }
@@ -484,30 +366,38 @@ async function searchApartments(){
   const box=document.getElementById('results');
   const status=document.getElementById('searchStatus');
   if(!q){ box.innerHTML=''; status.textContent='아파트 이름을 입력해주세요.'; return; }
-  status.textContent='검색 중...';
+  status.textContent='검색 중…';
   box.innerHTML='';
   try{
     const data=await api(`/api/search-apartments?district=${encodeURIComponent(district)}&q=${encodeURIComponent(q)}`);
     lastResults=data.results||[];
     status.textContent = lastResults.length ? '' : '최근 6개월 내 거래 기록에서 일치하는 단지를 찾지 못했어요.';
     lastResults.forEach(a=>{
-      const div=document.createElement('div'); div.className='apt';
+      const div=document.createElement('div'); div.className='entry';
       const added=subscriptions.includes(a.id);
-      div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)} ${escapeHtml(a.address || "")}</div></div>`;
-      const btn=document.createElement('button'); btn.className=added?'added':''; btn.textContent=added?String.fromCharCode(46321,47197,50756,47308):String.fromCharCode(50508,47548,32,52628,44032); btn.disabled=added;
-      if(!added) btn.onclick=()=>addApartment(a,btn);
-      div.appendChild(btn); box.appendChild(div);
+      div.innerHTML=`<div class="info"><b>${escapeHtml(a.name)}</b><div class="district">${escapeHtml(a.district)} ${escapeHtml(a.address || "")}</div></div>`;
+      if(added){
+        const stamp=document.createElement('div'); stamp.className='stamp'; stamp.textContent='등록완료';
+        div.appendChild(stamp);
+      } else {
+        const btn=document.createElement('button'); btn.className='btn-add'; btn.textContent='알림 추가';
+        btn.onclick=()=>addApartment(a,div,btn);
+        div.appendChild(btn);
+      }
+      box.appendChild(div);
     });
   }catch(e){ status.textContent=e.message; }
 }
 
-async function addApartment(apt,btn){
+async function addApartment(apt,row,btn){
   try{
     await api('/api/subscriptions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
       apartmentId:apt.id, name:apt.name, district:apt.district, lawd_cd:apt.lawd_cd
     })});
     if(!apartments.some(a=>a.id===apt.id)) apartments.push(apt);
-    subscriptions.push(apt.id); renderMine(); btn.textContent=String.fromCharCode(46321,47197,46108); btn.disabled=true; btn.classList.add('added');
+    subscriptions.push(apt.id); renderMine();
+    const stamp=document.createElement('div'); stamp.className='stamp'; stamp.textContent='등록완료';
+    row.replaceChild(stamp, btn);
   }catch(e){alert(e.message)}
 }
 async function removeApartment(id){
