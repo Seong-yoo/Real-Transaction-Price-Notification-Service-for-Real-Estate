@@ -131,7 +131,7 @@ async function searchApartments(){
     lastResults.forEach(a=>{
       const div=document.createElement('div'); div.className='apt';
       const added=subscriptions.includes(a.id);
-      div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)}</div></div>`;
+      div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)} ${escapeHtml(a.address || "")}</div></div>`;
       const btn=document.createElement('button'); btn.textContent=added?'등록됨':'알림 추가'; btn.disabled=added;
       if(!added) btn.onclick=()=>addApartment(a);
       div.appendChild(btn); box.appendChild(div);
