@@ -39,7 +39,7 @@
       <p class="muted">서울 25개 구를 지원해요. 구를 고르고 아파트 이름을 검색하세요. (최근 6개월 내 실거래가 있는 단지만 검색돼요)</p>
       <div class="row">
         <select id="districtSelect"></select>
-        <input id="search" placeholder="예: 헬리오시티, 잠실주공">
+        <input id="search" placeholder="예: 헬리오시티, 잠실주공" onkeydown="if(event.key===String.fromCharCode(69,110,116,101,114)) searchApartments()">
         <button onclick="searchApartments()">검색</button>
       </div>
       <div id="results"></div>
