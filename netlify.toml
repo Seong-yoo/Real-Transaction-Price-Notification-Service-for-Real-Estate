@@ -4,3 +4,9 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# 프론트에서 /api/xxx 로 호출하면 Netlify Function으로 연결
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
