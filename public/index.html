@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>실거래 알리미</title>
+  <style>
+    body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:760px;margin:0 auto;padding:28px 18px;background:#f6f7f9;color:#222}
+    .card{background:#fff;border-radius:16px;padding:22px;margin:14px 0;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+    h1{margin:0 0 8px}.muted{color:#777}.row{display:flex;gap:8px;flex-wrap:wrap}
+    input,select,button{font:inherit;padding:11px 12px;border:1px solid #ddd;border-radius:10px}
+    input{flex:1;min-width:180px}button{cursor:pointer;background:#222;color:#fff;border:none}
+    button.secondary{background:#eee;color:#222}.apt{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee}
+    .apt:last-child{border-bottom:0}.hidden{display:none}.danger{background:#e74c3c}
+    #login{display:inline-block;text-decoration:none;background:#fee500;color:#191919;padding:12px 18px;border-radius:10px;font-weight:700}
+    .notice{padding:12px;border-radius:10px;background:#f0f4ff;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🏠 실거래 알리미</h1>
+    <div id="status" class="muted">로그인 여부를 확인하고 있어요...</div>
+  </div>
+
+  <div id="guest" class="card hidden">
+    <p>카카오로 로그인하면 내가 원하는 아파트만 골라서 실거래 알림을 받을 수 있어요.</p>
+    <a id="login" href="/api/login">카카오로 로그인</a>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="card">
+      <h2>내 관심 아파트</h2>
+      <div id="mine"></div>
+      <div id="empty" class="muted hidden">아직 등록한 아파트가 없어요.</div>
+    </div>
+
+    <div class="card">
+      <h2>아파트 추가</h2>
+      <p class="muted">현재는 서울 지역을 먼저 지원해요. 아파트 이름을 입력해 검색하세요.</p>
+      <div class="row">
+        <input id="search" placeholder="예: 거여5단지, 헬리오시티">
+        <button onclick="searchApartments()">검색</button>
+      </div>
+      <div id="results"></div>
+      <div class="notice">원하는 단지가 검색 목록에 없으면, 다음 단계에서 전국 단지 검색까지 붙일 수 있어요.</div>
+    </div>
+
+    <div class="card">
+      <button class="secondary" onclick="logout()">로그아웃</button>
+    </div>
+  </div>
+
+<script>
+let me = null;
+let subscriptions = [];
+let apartments = [];
+
+async function api(url, options={}) {
+  const r = await fetch(url, {credentials:'include', ...options});
+  const data = await r.json().catch(()=>({}));
+  if (!r.ok) throw new Error(data.error || '요청에 실패했습니다.');
+  return data;
+}
+
+async function init(){
+  try{
+    const data = await api('/api/me');
+    if(!data.loggedIn){
+      document.getElementById('status').textContent='로그인하지 않았어요.';
+      document.getElementById('guest').classList.remove('hidden');
+      return;
+    }
+    me=data.user;
+    document.getElementById('status').textContent=`${me.nickname || '사용자'}님으로 로그인됨`;
+    document.getElementById('app').classList.remove('hidden');
+    await loadAll();
+  }catch(e){
+    document.getElementById('status').textContent=e.message;
+    document.getElementById('guest').classList.remove('hidden');
+  }
+}
+
+async function loadAll(){
+  const [a,s]=await Promise.all([api('/api/apartments'),api('/api/subscriptions')]);
+  apartments=a.apartments; subscriptions=s.subscriptions;
+  renderMine(); searchApartments();
+}
+
+function renderMine(){
+  const box=document.getElementById('mine');
+  const empty=document.getElementById('empty');
+  box.innerHTML='';
+  const list=subscriptions.map(id=>apartments.find(a=>a.id===id)).filter(Boolean);
+  empty.classList.toggle('hidden', list.length!==0);
+  list.forEach(a=>{
+    const div=document.createElement('div'); div.className='apt';
+    div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)}</div></div>`;
+    const btn=document.createElement('button'); btn.className='danger'; btn.textContent='삭제';
+    btn.onclick=()=>removeApartment(a.id); div.appendChild(btn); box.appendChild(div);
+  });
+}
+
+function searchApartments(){
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const list=apartments.filter(a=>!q || (a.name+a.district).toLowerCase().includes(q));
+  const box=document.getElementById('results'); box.innerHTML='';
+  list.slice(0,30).forEach(a=>{
+    const div=document.createElement('div'); div.className='apt';
+    const added=subscriptions.includes(a.id);
+    div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)}</div></div>`;
+    const btn=document.createElement('button'); btn.textContent=added?'등록됨':'알림 추가'; btn.disabled=added;
+    if(!added) btn.onclick=()=>addApartment(a.id);
+    div.appendChild(btn); box.appendChild(div);
+  });
+}
+
+async function addApartment(id){
+  try{ await api('/api/subscriptions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({apartmentId:id})});
+    subscriptions.push(id); renderMine(); searchApartments();
+  }catch(e){alert(e.message)}
+}
+async function removeApartment(id){
+  if(!confirm('이 아파트 알림을 삭제할까요?')) return;
+  try{ await api('/api/subscriptions',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({apartmentId:id})});
+    subscriptions=subscriptions.filter(x=>x!==id); renderMine(); searchApartments();
+  }catch(e){alert(e.message)}
+}
+async function logout(){ location.href='/api/logout'; }
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+init();
+</script>
+</body>
+</html>
