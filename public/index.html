@@ -5,15 +5,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>실거래 알리미</title>
   <style>
-    body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:760px;margin:0 auto;padding:28px 18px;background:#f6f7f9;color:#222}
-    .card{background:#fff;border-radius:16px;padding:22px;margin:14px 0;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-    h1{margin:0 0 8px}.muted{color:#777}.row{display:flex;gap:8px;flex-wrap:wrap}
-    input,select,button{font:inherit;padding:11px 12px;border:1px solid #ddd;border-radius:10px}
-    input{flex:1;min-width:180px}button{cursor:pointer;background:#222;color:#fff;border:none}
-    button.secondary{background:#eee;color:#222}.apt{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee}
-    .apt:last-child{border-bottom:0}.hidden{display:none}.danger{background:#e74c3c}
-    #login{display:inline-block;text-decoration:none;background:#fee500;color:#191919;padding:12px 18px;border-radius:10px;font-weight:700}
-    .notice{padding:12px;border-radius:10px;background:#f0f4ff;margin-top:12px}
+    *{box-sizing:border-box}
+    body{
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      max-width:860px;
+      margin:0 auto;
+      padding:42px 20px 60px;
+      background:#f5f6f8;
+      color:#17181a;
+      line-height:1.5
+    }
+    .card{
+      background:#fff;
+      border:1px solid #e8e9ec;
+      border-radius:20px;
+      padding:26px;
+      margin:16px 0;
+      box-shadow:0 8px 28px rgba(20,25,35,.055)
+    }
+    h1{margin:0 0 7px;font-size:30px;letter-spacing:-1px}
+    h2{margin:0 0 18px;font-size:21px;letter-spacing:-.5px}
+    .muted{color:#7a7f87}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    input,select,button{font:inherit;min-height:48px;border-radius:13px}
+    input,select{
+      border:1px solid #dfe1e5;
+      background:#fff;
+      padding:12px 14px;
+      color:#17181a;
+      outline:none
+    }
+    input{flex:1;min-width:220px}
+    input:focus,select:focus{
+      border-color:#8c93a0;
+      box-shadow:0 0 0 3px rgba(80,90,110,.08)
+    }
+    button{
+      cursor:pointer;
+      border:0;
+      padding:12px 18px;
+      background:#17181a;
+      color:#fff;
+      font-weight:650;
+      transition:transform .12s ease,opacity .12s ease,background .12s ease
+    }
+    button:hover{opacity:.9}
+    button:active{transform:scale(.98)}
+    button:disabled{cursor:default;opacity:1;background:#eef0f2;color:#858a92}
+    button.added{background:#eef7f1;color:#26734a}
+    button.secondary{background:#f0f1f3;color:#27292d}
+    .apt{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      padding:16px 0;
+      border-bottom:1px solid #edf0f2
+    }
+    .apt:last-child{border-bottom:0}
+    .apt b{font-size:16px}
+    .apt .muted{font-size:14px;margin-top:3px}
+    .hidden{display:none}
+    .danger{background:#f05252}
+    #login{
+      display:inline-block;
+      text-decoration:none;
+      background:#fee500;
+      color:#191919;
+      padding:13px 20px;
+      border-radius:13px;
+      font-weight:700
+    }
+    .notice{
+      padding:14px 16px;
+      border-radius:13px;
+      background:#f3f6ff;
+      border:1px solid #e1e7ff;
+      margin-top:14px
+    }
+    #status{font-size:14px}
+    #searchStatus{margin-top:12px}
+    #results{margin-top:8px}
+    @media(max-width:600px){
+      body{padding:22px 14px 40px}
+      .card{padding:20px;border-radius:17px}
+      h1{font-size:26px}
+      .row{flex-direction:column}
+      input,select,button{width:100%}
+      .apt{align-items:flex-start}
+      .apt button{width:auto;min-width:92px;flex-shrink:0}
+    }
   </style>
 </head>
 <body>
@@ -133,19 +214,19 @@ async function searchApartments(){
       const added=subscriptions.includes(a.id);
       div.innerHTML=`<div><b>${escapeHtml(a.name)}</b><div class="muted">${escapeHtml(a.district)} ${escapeHtml(a.address || "")}</div></div>`;
       const btn=document.createElement('button'); btn.textContent=added?'등록됨':'알림 추가'; btn.disabled=added;
-      if(!added) btn.onclick=()=>addApartment(a);
+      if(!added) btn.onclick=()=>addApartment(a,btn);
       div.appendChild(btn); box.appendChild(div);
     });
   }catch(e){ status.textContent=e.message; }
 }
 
-async function addApartment(apt){
+async function addApartment(apt,btn){
   try{
     await api('/api/subscriptions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
       apartmentId:apt.id, name:apt.name, district:apt.district, lawd_cd:apt.lawd_cd
     })});
     if(!apartments.some(a=>a.id===apt.id)) apartments.push(apt);
-    subscriptions.push(apt.id); renderMine(); searchApartments();
+    subscriptions.push(apt.id); renderMine(); btn.textContent=String.fromCharCode(46321,47197,46108); btn.disabled=true; btn.classList.add('added');
   }catch(e){alert(e.message)}
 }
 async function removeApartment(id){
