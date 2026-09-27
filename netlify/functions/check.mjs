@@ -1,6 +1,6 @@
 import { readJSON, writeJSON, store, getMonths, fetchMonth, transactionId, formatTransaction, getValidAccessToken, kakaoSend, DEFAULT_APARTMENTS } from "./_lib.mjs";
 
-export const config = { schedule: "*/10 * * * *" };
+export const config = { schedule: "0 21 * * *" };
 
 export default async ()=>{
   const {blobs: userBlobs}=await store.list({prefix:"users/"});
