@@ -9,7 +9,7 @@ export default async () => {
   url.searchParams.set("client_id", process.env.KAKAO_REST_KEY);
   url.searchParams.set("redirect_uri", redirectUri);
   url.searchParams.set("response_type","code");
-  url.searchParams.set("scope","talk_message");
+  url.searchParams.set("scope","talk_message,profile_nickname");
   url.searchParams.set("state",state);
   return Response.redirect(url.toString(),302);
 }
