@@ -9,7 +9,7 @@ export default async (req) => {
   const q = url.searchParams.get("q") || "";
 
   const district = SEOUL_DISTRICTS.find(d => d.name === districtName);
-  if (!district) return json({ error: "구를 선택해주세요." }, 400);
+  if (!district) return json({ error: "지역을 선택해주세요." }, 400);
   if (normalize(q).length < 1) return json({ results: [] });
   if (!process.env.MOLIT_SERVICE_KEY) return json({ error: "MOLIT_SERVICE_KEY가 설정되지 않았습니다." }, 500);
 

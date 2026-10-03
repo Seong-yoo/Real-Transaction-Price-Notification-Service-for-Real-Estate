@@ -144,7 +144,7 @@
 
     .search-row{
       display:grid;
-      grid-template-columns:106px 1fr auto;
+      grid-template-columns:150px 150px 1fr auto;
       gap:8px
     }
 
@@ -280,14 +280,22 @@
 
       <section>
         <h2>아파트 추가</h2>
-        <p class="hint">서울 25개 구를 지원해요. 구를 고르고 아파트 이름을 검색하세요. (최근 6개월 내 실거래가 있는 단지만 검색돼요)</p>
+        <p class="hint">전국 시·군·구를 지원해요. 지역을 고르고 아파트 이름을 검색하세요. (최근 6개월 내 실거래가가 있는 단지만 검색돼요)</p>
         <div class="search-row">
+          <select id="sidoSelect" onchange="fillDistrictSelect()"></select>
           <select id="districtSelect"></select>
           <input id="search" placeholder="예: 헬리오시티, 잠실주공" onkeydown="if(event.key==='Enter') searchApartments()">
           <button onclick="searchApartments()">검색</button>
         </div>
         <div id="results"></div>
         <div id="searchStatus"></div>
+      </section>
+
+      <section>
+        <h2>카카오 알림 테스트</h2>
+        <p class="hint">실거래 검사와 관계없이 지금 로그인한 본인에게 테스트 카카오톡을 한 통 보내요.</p>
+        <button id="testNotifyBtn" onclick="testNotify()">🔔 테스트 알림 보내기</button>
+        <div id="testNotifyStatus"></div>
       </section>
 
       <div class="footer-row">
@@ -302,12 +310,8 @@ let subscriptions = [];
 let apartments = [];
 let lastResults = [];
 
-// 백엔드 SEOUL_DISTRICTS(_lib.mjs)와 이름이 정확히 같아야 검색이 동작합니다.
-const SEOUL_DISTRICTS = [
-  "종로구","중구","용산구","성동구","광진구","동대문구","중랑구","성북구","강북구","도봉구",
-  "노원구","은평구","서대문구","마포구","양천구","강서구","구로구","금천구","영등포구","동작구",
-  "관악구","서초구","강남구","송파구","강동구"
-];
+// 서버와 동일한 전국 지역 목록. 검색 시 서버가 최종적으로 코드 유효성을 다시 확인합니다.
+let regionList = [];
 
 async function api(url, options={}) {
   const r = await fetch(url, {credentials:'include', ...options});
@@ -316,14 +320,25 @@ async function api(url, options={}) {
   return data;
 }
 
+async function loadRegions(){
+  const data = await api('/api/regions');
+  regionList = data.regions || [];
+  const sidoSel = document.getElementById('sidoSelect');
+  const sidos = [...new Set(regionList.map(r=>r.sido))];
+  sidoSel.innerHTML = sidos.map(s=>`<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+  fillDistrictSelect();
+}
+
 function fillDistrictSelect(){
+  const sido=document.getElementById('sidoSelect').value;
   const sel=document.getElementById('districtSelect');
-  sel.innerHTML = SEOUL_DISTRICTS.map(d=>`<option value="${d}">${d}</option>`).join('');
+  const districts=regionList.filter(r=>r.sido===sido);
+  sel.innerHTML = districts.map(d=>`<option value="${escapeHtml(d.name)}">${escapeHtml(d.name.replace(d.sido+' ','').replace(d.sido,''))}</option>`).join('');
 }
 
 async function init(){
-  fillDistrictSelect();
   try{
+    await loadRegions();
     const data = await api('/api/me');
     if(!data.loggedIn){
       document.getElementById('status').textContent='로그인하지 않았어요.';
@@ -405,6 +420,20 @@ async function removeApartment(id){
   try{ await api('/api/subscriptions',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({apartmentId:id})});
     subscriptions=subscriptions.filter(x=>x!==id); renderMine();
   }catch(e){alert(e.message)}
+}
+async function testNotify(){
+  const btn=document.getElementById('testNotifyBtn');
+  const status=document.getElementById('testNotifyStatus');
+  btn.disabled=true;
+  status.textContent='카카오톡을 보내는 중…';
+  try{
+    const data=await api('/api/test-notify');
+    status.textContent=data.message || '카카오톡을 확인해보세요.';
+  }catch(e){
+    status.textContent=e.message;
+  }finally{
+    btn.disabled=false;
+  }
 }
 async function logout(){ location.href='/api/logout'; }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
