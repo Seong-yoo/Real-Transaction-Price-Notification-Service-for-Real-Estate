@@ -36,7 +36,9 @@ export default async ()=>{
       const key=`${apt.lawd_cd}:${month}`;
       if(cache.has(key)) continue;
       try{
-        cache.set(key,{ok:true,rows:await fetchMonth(process.env.MOLIT_SERVICE_KEY,apt.lawd_cd,month)});
+        const fetchedRows = await fetchMonth(process.env.MOLIT_SERVICE_KEY,apt.lawd_cd,month);
+        cache.set(key,{ok:true,rows:fetchedRows});
+        console.log('API OK', key, 'rows=', fetchedRows.length);
       }catch(e){
         console.error("API 실패",key,e.message);
         cache.set(key,{ok:false,rows:[]});
@@ -51,10 +53,48 @@ export default async ()=>{
       const result=cache.get(`${apt.lawd_cd}:${month}`);
       if(!result?.ok){complete=false;continue;}
       for(const row of result.rows){
+        const isTarget =
+          String(row.dealYear) === "2026" &&
+          String(row.dealMonth).padStart(2,"0") === "09" &&
+          String(row.dealDay).padStart(2,"0") === "22" &&
+          String(row.floor).trim() === "9" &&
+          String(row.dealAmount).replace(/,/g,"").replace(/\s+/g,"") === "305500";
+
+        if(isTarget){
+          console.log("TARGET IN RAW API", JSON.stringify({
+            requestedApt:apt.name,
+            apiAptName:row.aptNm,
+            dealYear:row.dealYear,
+            dealMonth:row.dealMonth,
+            dealDay:row.dealDay,
+            dealAmount:row.dealAmount,
+            floor:row.floor,
+            excluUseAr:row.excluUseAr,
+            jibun:row.jibun
+          }));
+        }
+
         if(String(row.aptNm||"").trim()===String(apt.name).trim()) rows.push(row);
       }
     }
     rowsByApt.set(id,{apt,rows,complete});
+    console.log('APT MATCH', JSON.stringify({id,name:apt.name,lawd_cd:apt.lawd_cd,rows:rows.length,complete}));
+    const targetRows = rows.filter(r =>
+      String(r.dealYear) === "2026" &&
+      String(r.dealMonth).padStart(2,"0") === "09" &&
+      String(r.dealDay).padStart(2,"0") === "22" &&
+      String(r.floor).trim() === "9" &&
+      String(r.dealAmount).replace(/,/g,"").replace(/\s+/g,"") === "305500"
+    );
+    if (targetRows.length) {
+      console.log('TARGET TRANSACTION FOUND', JSON.stringify(targetRows.map(r => ({
+        aptNm:r.aptNm, dealYear:r.dealYear, dealMonth:r.dealMonth,
+        dealDay:r.dealDay, dealAmount:r.dealAmount, floor:r.floor,
+        excluUseAr:r.excluUseAr, jibun:r.jibun
+      }))));
+    } else {
+      console.log('TARGET TRANSACTION NOT FOUND IN MATCHED ROWS', apt.name);
+    }
   }
 
   let sent=0;
@@ -72,6 +112,7 @@ export default async ()=>{
 
     const seenSet=new Set(seen);
     const newRows=rows.filter(r=>!seenSet.has(transactionId(r,apt.name)));
+    console.log('TRANSACTION CHECK', JSON.stringify({name:apt.name,totalRows:rows.length,seenCount:seen.length,newCount:newRows.length}));
     if(!newRows.length) continue;
 
     await writeJSON(seenKey,[...new Set([...seen,...ids])]);
