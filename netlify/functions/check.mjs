@@ -112,6 +112,27 @@ export default async ()=>{
 
     const seenSet=new Set(seen);
     const newRows=rows.filter(r=>!seenSet.has(transactionId(r,apt.name)));
+        if (apt.name === "헬리오시티") {
+      const target = rows.filter(r =>
+        String(r.dealYear) === "2026" &&
+        String(r.dealMonth) === "9" &&
+        String(r.dealDay) === "22" &&
+        String(r.floor).trim() === "9" &&
+        String(r.dealAmount).replace(/,/g, "").replace(/\s+/g, "") === "305500" &&
+        Number(r.excluUseAr) >= 84 &&
+        Number(r.excluUseAr) < 85
+      );
+      console.log("HELIO SEEN DIAGNOSTIC", JSON.stringify(target.map(r => {
+        const txId = transactionId(r, apt.name);
+        return {
+          transactionId: txId,
+          isSeen: seenSet.has(txId),
+          area: r.excluUseAr,
+          amount: r.dealAmount,
+          floor: r.floor
+        };
+      })));
+    }
     console.log('TRANSACTION CHECK', JSON.stringify({name:apt.name,totalRows:rows.length,seenCount:seen.length,newCount:newRows.length}));
     if(!newRows.length) continue;
 
